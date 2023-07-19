@@ -21,17 +21,26 @@ def map_brightness_to_ascii(brightness):
     return _ASCII_ARR[_ASCII_MAP[brightness]]
 
 
-im = Image.open("ascii-pineapple.jpg")
+big_im = Image.open("ascii-pineapple.jpg")
+
+small_w = round(big_im.width / 10)
+small_h = round(big_im.height / 10)
+print(small_w)
+print(small_h)
+im = big_im.resize((small_w, small_h))
 print("Image loaded with width {0}px and height {1}px\n".format(im.width, im.height))
 
 
-px_data = list(im.getdata())
-px_brightness_list = []
-for px_tuple in px_data:
-    px_brightness_list.append(avg_brightness(px_tuple))
+all_px_data = list(im.getdata())
 
-ascii_list = ""
-for px_b in px_brightness_list:
-    ascii_list = ascii_list + map_brightness_to_ascii(px_b)
+px_matrix = []
+x = 0
 
-print(ascii_list)
+
+for i in range(0, len(all_px_data)):
+    for j in range(0, im.width):
+        line = map_brightness_to_ascii(avg_brightness(all_px_data[i]))
+        i = i + 1
+        print(line, end=" ")
+    print("\n")
+    px_matrix.append(line)
