@@ -1,4 +1,5 @@
 from PIL import Image
+import numpy
 
 _ASCII_ARR = '`^",:;Il!i~+_-?][}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$'
 
@@ -14,7 +15,8 @@ for i in range(0, 256):
 
 
 def avg_brightness(px_tuple):
-    return int((px_tuple[0] + px_tuple[1] + px_tuple[2]) / 3)
+    brightness = int((px_tuple[0] + px_tuple[1] + px_tuple[2]) / 3)
+    return brightness
 
 
 def map_brightness_to_ascii(brightness):
@@ -23,24 +25,22 @@ def map_brightness_to_ascii(brightness):
 
 big_im = Image.open("ascii-pineapple.jpg")
 
-small_w = round(big_im.width / 10)
-small_h = round(big_im.height / 10)
-print(small_w)
-print(small_h)
+small_w = round(big_im.width / 3)
+small_h = round(big_im.height / 3)
 im = big_im.resize((small_w, small_h))
-print("Image loaded with width {0}px and height {1}px\n".format(im.width, im.height))
 
+# print("Image loaded with width {0}px and height {1}px\n".format(im.width, im.height))
 
-all_px_data = list(im.getdata())
+all_px_data = im.getdata()
+b_data = []
+for px in all_px_data:
+    b_data.append(avg_brightness(px))
 
-px_matrix = []
-x = 0
+px_matrix = numpy.reshape(b_data, (im.height, im.width))
 
-
-for i in range(0, len(all_px_data)):
-    for j in range(0, im.width):
-        line = map_brightness_to_ascii(avg_brightness(all_px_data[i]))
-        i = i + 1
-        print(line, end=" ")
-    print("\n")
-    px_matrix.append(line)
+for row in px_matrix:
+    line = ""
+    for col in row:
+        ascii = map_brightness_to_ascii(col)
+        line = line + ascii + ascii + ascii
+    print(line)
