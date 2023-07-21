@@ -1,2 +1,4 @@
-# asciiart
-Convert image to ascii art
+# asciiartverter
+command-line tool for converting images to ascii art
+
+## options coming soon!
