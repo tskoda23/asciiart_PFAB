@@ -92,16 +92,16 @@ def convert_to_ascii(scale=10, b_type=0, image="ascii-pineapple.jpg"):
     return painting
 
 
-init()
-ascii_art = ""
+if __name__ == "__main__":
+    init()
+    ascii_art = ""
+    if len(sys.argv) > 3:
+        ascii_art = convert_to_ascii(int(sys.argv[1]), int(sys.argv[2]), sys.argv[3])
+    elif len(sys.argv) > 2:
+        ascii_art = convert_to_ascii(int(sys.argv[1]), int(sys.argv[2]))
+    elif len(sys.argv) > 1:
+        ascii_art = convert_to_ascii(int(sys.argv[1]))
+    else:
+        ascii_art = convert_to_ascii()
 
-if len(sys.argv) > 3:
-    ascii_art = convert_to_ascii(int(sys.argv[1]), int(sys.argv[2]), sys.argv[3])
-elif len(sys.argv) > 2:
-    ascii_art = convert_to_ascii(int(sys.argv[1]), int(sys.argv[2]))
-elif len(sys.argv) > 1:
-    ascii_art = convert_to_ascii(int(sys.argv[1]))
-else:
-    ascii_art = convert_to_ascii()
-
-print(_OKGREEN + ascii_art)
+    print(_OKGREEN + ascii_art)
