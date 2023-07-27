@@ -3,17 +3,18 @@ from PIL import Image
 import numpy
 import sys
 
-#GLOBALS
+# GLOBALS
 
 _ASCII_ARR = '`^",:;Il!i~+_-?][}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$'
 _ASCII_MAP = {}
-_OKGREEN = '\033[92m'
+_OKGREEN = "\033[92m"
+
 
 def init():
     global _ASCII_ARR
     global _ASCII_MAP
 
-    space = 256 / len(_ASCII_ARR)
+    space = 256 / (len(_ASCII_ARR) - 1)
 
     j = 1
 
@@ -22,24 +23,41 @@ def init():
             j = j + 1
         _ASCII_MAP[i] = j
 
+
+#
 def min_max_b(px_tuple):
-    return int((max(px_tuple[0], px_tuple[1], px_tuple[2]) + min(px_tuple[0], px_tuple[1], px_tuple[2])) / 2)
+    return int(
+        (
+            max(px_tuple[0], px_tuple[1], px_tuple[2])
+            + min(px_tuple[0], px_tuple[1], px_tuple[2])
+        )
+        / 2
+    )
+
 
 def lum_b(px_tuple):
-    return int(numpy.sqrt( 0.299*numpy.square(px_tuple[0]) + 0.587*numpy.square(px_tuple[1]) + 0.114*numpy.square(px_tuple[2])))
+    return int(
+        numpy.sqrt(
+            0.299 * numpy.square(px_tuple[0])
+            + 0.587 * numpy.square(px_tuple[1])
+            + 0.114 * numpy.square(px_tuple[2])
+        )
+    )
+
 
 def avg_b(px_tuple):
     return int((px_tuple[0] + px_tuple[1] + px_tuple[2]) / 3)
 
+
 def get_brightness(px_tuple, b_type):
     if b_type == 0:
-        return(avg_b(px_tuple))
+        return avg_b(px_tuple)
     elif b_type == 1:
-        return(min_max_b(px_tuple))
+        return min_max_b(px_tuple)
     elif b_type == 2:
-        return(lum_b(px_tuple))
+        return lum_b(px_tuple)
     else:
-        return(avg_b(px_tuple))
+        return avg_b(px_tuple)
 
 
 def map_brightness_to_ascii(brightness):
@@ -48,7 +66,8 @@ def map_brightness_to_ascii(brightness):
 
     return _ASCII_ARR[_ASCII_MAP[brightness]]
 
-def convert_to_ascii(scale = 10, b_type = 0, image = "ascii-pineapple.jpg"):
+
+def convert_to_ascii(scale=10, b_type=0, image="ascii-pineapple.jpg"):
     big_im = Image.open(image)
 
     small_w = round(big_im.width / scale)
@@ -72,6 +91,7 @@ def convert_to_ascii(scale = 10, b_type = 0, image = "ascii-pineapple.jpg"):
 
     return painting
 
+
 init()
 ascii_art = ""
 
@@ -85,4 +105,3 @@ else:
     ascii_art = convert_to_ascii()
 
 print(_OKGREEN + ascii_art)
-
