@@ -2,6 +2,7 @@
 from PIL import Image
 import numpy
 import sys
+import cv2
 
 # GLOBALS
 
@@ -71,8 +72,17 @@ def map_brightness_to_ascii(brightness, invert):
         return _ASCII_ARR[_ASCII_MAP[brightness]]
 
 
-def convert_to_ascii(scale=10, b_type=0, invert=0, image="ascii-pineapple.jpg"):
+def convert_to_ascii(
+    scale=10, b_type=0, invert=0, use_webcam=0, image="ascii-pineapple.jpg"
+):
     big_im = Image.open(image)
+
+    if use_webcam == 1:
+        cam_port = 0
+        cam = cv2.VideoCapture(cam_port)
+        result, image = cam.read()
+        image = cv2.cvtColor(src=image, code=cv2.COLOR_BGR2RGB)
+        big_im = Image.fromarray(image)
 
     small_w = round(big_im.width / scale)
     small_h = round(big_im.height / scale)
@@ -99,10 +109,18 @@ def convert_to_ascii(scale=10, b_type=0, invert=0, image="ascii-pineapple.jpg"):
 if __name__ == "__main__":
     init()
     ascii_art = ""
-    if len(sys.argv) > 4:
-        print(sys.argv[4])
+
+    if len(sys.argv) > 5:
         ascii_art = convert_to_ascii(
-            int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]), sys.argv[4]
+            int(sys.argv[1]),
+            int(sys.argv[2]),
+            int(sys.argv[3]),
+            int(sys.argv[4]),
+            sys.argv[5],
+        )
+    elif len(sys.argv) > 4:
+        ascii_art = convert_to_ascii(
+            int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]), int(sys.argv[4])
         )
     elif len(sys.argv) > 3:
         ascii_art = convert_to_ascii(
