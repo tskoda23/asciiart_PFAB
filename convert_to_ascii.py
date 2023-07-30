@@ -78,7 +78,7 @@ def map_brightness_to_ascii(brightness, invert):
 
 
 def convert_to_ascii(
-    scale=10, b_type=0, invert=0, use_webcam=0, image="ascii-pineapple.jpg"
+    scale=5, b_type=0, invert=0, use_webcam=0, use_max_b=1, image="ascii-pineapple.jpg"
 ):
     big_im = Image.open(image)
 
@@ -97,7 +97,10 @@ def convert_to_ascii(
     b_data = []
 
     for px in all_px_data:
-        b = get_brightness(px, b_type)
+        if use_max_b == 0:
+            b = get_brightness(px, b_type)
+        else:
+            b = 1
         hex = rgb_to_hex(px)
         b_data.append({"hex": hex, "b": b})
 
@@ -107,9 +110,13 @@ def convert_to_ascii(
     for row in px_matrix:
         line = ""
         for col in row:
-            ascii = map_brightness_to_ascii(col["b"], invert)
             color = col["hex"]
-            pix = cs(ascii, color)
+            if use_max_b == 0:
+                ascii = map_brightness_to_ascii(col["b"], invert)
+                pix = cs(ascii, color)
+            else:
+                pix = cs("$", color)
+
             line = line + pix + pix + pix
         painting = painting + line + "\n"
 
@@ -120,7 +127,16 @@ if __name__ == "__main__":
     init()
     ascii_art = ""
 
-    if len(sys.argv) > 5:
+    if len(sys.argv) > 6:
+        ascii_art = convert_to_ascii(
+            int(sys.argv[1]),
+            int(sys.argv[2]),
+            int(sys.argv[3]),
+            int(sys.argv[4]),
+            int(sys.argv[5]),
+            sys.argv[6],
+        )
+    elif len(sys.argv) > 5:
         ascii_art = convert_to_ascii(
             int(sys.argv[1]),
             int(sys.argv[2]),
