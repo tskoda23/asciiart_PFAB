@@ -3,6 +3,7 @@ from PIL import Image
 import numpy
 import sys
 import cv2
+from stringcolor import *
 
 # GLOBALS
 
@@ -61,6 +62,10 @@ def get_brightness(px_tuple, b_type):
         return avg_b(px_tuple)
 
 
+def rgb_to_hex(px):
+    return "#{:02x}{:02x}{:02x}".format(px[0], px[1], px[2])
+
+
 def map_brightness_to_ascii(brightness, invert):
     global _ASCII_MAP
 
@@ -90,8 +95,11 @@ def convert_to_ascii(
 
     all_px_data = im.getdata()
     b_data = []
+
     for px in all_px_data:
-        b_data.append(get_brightness(px, b_type))
+        b = get_brightness(px, b_type)
+        hex = rgb_to_hex(px)
+        b_data.append({"hex": hex, "b": b})
 
     px_matrix = numpy.reshape(b_data, (im.height, im.width))
 
@@ -99,8 +107,10 @@ def convert_to_ascii(
     for row in px_matrix:
         line = ""
         for col in row:
-            ascii = map_brightness_to_ascii(col, invert)
-            line = line + ascii + ascii + ascii
+            ascii = map_brightness_to_ascii(col["b"], invert)
+            color = col["hex"]
+            pix = cs(ascii, color)
+            line = line + pix + pix + pix
         painting = painting + line + "\n"
 
     return painting
